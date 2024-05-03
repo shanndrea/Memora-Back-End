@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/homeStyle.css">
+    <title>Memora</title>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="sidebar">
+            <img src="/img/MemorA.png">
+            <ul>
+                <li><a href="./Homepage.html" onclick="loadPage('./Homepage.html'); setActive(this); return false;"><i class='bx bxs-home'></i>Home</a></li>
+                <li><a href="/toDoList" onclick="loadPage('../views/ToDoList.htm'); setActive(this); return false;"><i class='bx bx-list-plus'></i>To do List</a></li>
+                <li><a href="./calendar.html" onclick="loadPage('./calendar.html'); setActive(this); return false;"><i class='bx bx-calendar'></i>Calendar</a></li>
+            </ul>
+            <div class="logout-button">
+                <form action="/logout" method="post" onsubmit="return confirm('Are you sure?');" style="display: inline;">
+                    <button type="submit">Logout</button>
+                </form>
+            </div>
+        </div>
+        <div class="clock-container">
+            <div class="clock__container grid">
+                    
+                <div class="clock__content grid">
+                    <div class="clock__circle">
+                        <span class="clock__twelve"></span>
+                        <span class="clock__three"></span>
+                        <span class="clock__six"></span>
+                        <span class="clock__nine"></span>
+
+                        <div class="clock__rounder"></div>
+                        <div class="clock__hour" id="clock-hour"></div>
+                        <div class="clock__minutes" id="clock-minutes"></div>
+                        <div class="clock__seconds" id="clock-seconds"></div>
+                    </div>
+
+                    <div>
+                        <div class="clock__text">
+                            <div class="clock__text-hour" id="text-hour"></div>
+                            <div class="clock__text-minutes" id="text-minutes"></div>
+                            <div class="clock__text-ampm" id="text-ampm"></div>
+                        </div>
+
+                        <div class="clock__date">
+                            <span id="date-day"></span>
+                            <span id="date-month"></span>
+                            <span id="date-year"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clock__log">
+                    <a href="#" class="login">Login</a>
+                    <span class="separator"> | </span>
+                    <a href="#" class="regist">Register</a>
+                </div>
+            </div>
+
+            <div class="text-clock">
+                <h1>Maximize productivity with Memora now!</h1>
+            </div>
+
+        </div>
+        
+    </div>
+
+
+
+    
+    <script src="/js/clock.js"></script>
+</body>
+</html>

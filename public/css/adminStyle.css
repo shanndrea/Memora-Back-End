@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+
+:root {
+    font-size: 20px;
+    font-family: "Lato", sans-serif;
+    --text-primary: #000000;
+    --text-secondary:#b6b6b6;
+    --bg-primary: #3A353F;
+    --bg-secondary: #505668;
+    --bg-tertiary: #F1ECE1;
+    --bg-accent: #C05850;
+}
+
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Lato", sans-serif;
+    background-color: #faf9f5;
+    
+}
+
+.logo {
+    margin-top: -5em;
+    margin-bottom: -5.5em;
+    align-items: center;
+}
+
+.logo img {
+    width: 300px; 
+    height: 100%; 
+    z-index: 1;
+}
+
+header {
+    background-color: #faf9f5;
+    color: var(--bg-primary);
+    padding: 10px 20px;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+
+.welcome {
+    padding: 0 3% 0 3%;
+}
+
+.table-container {
+    padding: 50px;
+    background: #faf9f5;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f3f3f3;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f8f8f8;
+}
+
+button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    background-color: #3e8b41e3; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #36813a;
+}
+
+button.logout{
+    margin-top: -4em;
+    margin-right: 5em;
+}
+
+.add{
+    text-align: right;
+    width: 100%;
+    font-size: 20px;
+    padding: 10px;
+    margin: -50px 50px 0 0;
+}
+
+button.add{
+    width: 10%;
+    text-align: center;
+}
+
+button.add, button.add-user, button.update{
+    background-color: #2c72f3de; 
+}
+
+button.add:hover, button.add-user:hover, button.update:hover{
+    background-color: #2d65ccde; 
+}
+
+button.delete {
+    background-color: #f44336de; /* Red */
+}
+
+button.delete:hover {
+    background-color: #da190b;
+}
+
+.search-container {
+    margin: 10px;
+    text-align: right;
+    padding: 10px 50px 0 0;
+    width: 20%;
+}
+
+input[type="text"] {
+    width: 10%;
+    padding: 8px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    justify-content: end;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    color: #666;
+    font-size: smaller;
+}
+
+button.logout {
+    font-size: 0.7rem;
+    padding: 10px 0;
+    border-radius: 20px;
+    outline: none;
+    border: none;
+    width: 10%;
+    color: #fff;
+    cursor: pointer;
+    background: var(--bg-accent);
+}
+
+button.logout:hover {
+    background-color: #963d36;
+}
+
+.edit-container {
+    width: 50%;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-size: large;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #666;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+}
+
+.top{
+    display: flex;
+}
+
+.dropbtn {
+    background-color: transparent;
+    color: black;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropbtn:hover, .dropbtn:focus {
+    background-color: #ddd;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    z-index: 1;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    right: 0;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #ddd;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }

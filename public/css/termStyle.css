@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+
+* {
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+body {
+    font-family: "Lato", sans-serif;    
+    color: #333;
+    margin: 0 auto;
+}
+
+html{
+    font-size: 62.5%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+.navlogo img{
+    width: 300px;
+    margin-left: 150px;
+    padding: 10px;
+}
+
+.terms-container {
+    background-color: #fff;
+    padding: 20px;
+    max-width: 800px;
+    line-height: 1.6;
+    align-items: center;
+    justify-content: center;
+}
+
+.terms-container h1 {
+    color: #000;
+    font-size: 40px;
+}
+
+h2 {
+    font-size: 30px;
+    color: #000;
+    margin-top: 10px;
+}
+
+h3 {
+    font-size: 25px;
+    color: #000;
+    margin-top: 10px;
+}
+
+p {
+    margin-top: 10px;
+    font-size: 16px;
+    text-align: justify;
+}
+
+.footer{
+    background:#C05850;
+    text-align: right;
+  }
+  
+  .footer .credit{
+    padding-bottom:2.5rem;
+    padding-top: 1rem;
+    color:#fff;
+    font-weight: normal;
+    font-size: 2rem;
+  }
+  
+  .footer .credit span{
+    color:var(--blue);
+  }
+  
+  .footer h4 {
+    font-size: 28px;
+    color: white;
+    padding-bottom: 1rem;
+    text-align: right;
+  }
+  
+  
+  .footer p {
+    color: #dbdbdb;
+  }
+  
+  footer_contact{
+    margin-right: auto;
+    max-width: 500px;
+  }
+  
+  .footer.footer_contact .contact_link_box {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  
+  .footer .footer_contact .contact_link_box a {
+    margin: 5px 0;
+    color: white;
+    font-size: 15px;
+  }
+  
+  .footer .footer_contact .contact_link_box a i {
+    margin-right: 5px;
+  }
+  
+  .footer .footer_contact .contact_link_box a:hover {
+    color: #ffbe33;
+  }
+  
+  .footer_contact h4,
+  .footer_contact .footer_social {
+    text-align: left;
+  }
+  
+  .footer .footer_contact h4 {
+    text-align: right;
+  }
+  
+
+  section{
+    padding:2rem 9%;
+  }

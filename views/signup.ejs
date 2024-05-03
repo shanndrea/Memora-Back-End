@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>Sign Up</title>
+</head>
+<body>
+<div class="class">
+    <div class="logo">
+        <img src="/img/logo.png" alt="logo">
+        </div>
+        
+    <div class="wrapper">
+        <h1>Sign Up</h1>
+        <div class="message">
+            <% if (typeof errorMessage !== 'undefined') { %>
+                <p class="error-message"><%= errorMessage %></p>
+            <% } else if (typeof successMessage !== 'undefined') { %>
+                <p class="success-message"><%= successMessage %></p>
+            <% } %>
+    </div>
+        <form action="/signup" method="post">
+            <input type="text" placeholder="Choose a Username" id="username" name="username" required autocomplete="off" >
+            <input type="email" placeholder="Enter your Email" id="email" name="email" required autocomplete="off" >
+            <div class="password-input">
+                <input type="password" placeholder="Enter your Password" name="password" id="password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility()">
+                    <i class="bx bx-hide" id="eye-icon"></i>
+                </span>
+            </div>
+                <input type="text" name="securityAnswer" placeholder="Security Answer (your fav food, dog name etc)" required>
+            
+        <div class="terms">
+            <input type="checkbox" id="checkbox" required>
+            <label for="checkbox">I agree to these
+                 <a href="/terms" target="_blank">Terms & Conditions</a></label>
+        </div>
+        <button type="submit" class="submit-btn">Sign Up</button>
+
+        <br>
+        </form>
+
+        <div class="or">
+            <div class="line"></div>
+            <div class="between"><p>Or</p></div>
+            <div class="line"></div>
+        </div>
+
+        <div class="social-icons">
+            <button type="submit" class="submit-btn"><a href="/google" class="icon"><i class="fa-brands fa-google"></i></a>   Continue with Google
+                </button>
+        </div>
+
+        <div class="member">
+            Already a member? <a href="/login">
+                Login Here
+            </a>
+        </div>
+    
+    </div>
+
+</div>
+
+<script>
+    function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("password");
+    var passwordIcon = document.getElementById("eye-icon");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        passwordIcon.classList.remove("bx-hide");
+        passwordIcon.classList.add("bx-show");
+    } else {
+        passwordInput.type = "password";
+        passwordIcon.classList.remove("bx-show");
+        passwordIcon.classList.add("bx-hide");
+    }
+}
+
+</script>
+</body>
+</html>

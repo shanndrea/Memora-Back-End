@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memora</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="shortcut-icon" href="images/favicon_io/favicon.ico" type="image/x-icon">
+
+    <link href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="css/landingStyle.css">
+</head>
+
+<body>
+    <header>
+        <div class="navcontainer">
+            <div class="navlogo">
+                <img src="/img/logo3.png">
+            </div>
+
+            <nav class="navbar">
+                <div class="dropdown">
+                    <button class="dropbtn">Menu</button>
+                    <div class="dropdown-content">
+                        <a href="/terms" target="_blank">Terms</a>
+                        <a href="/policy" target="_blank">Policy</a>
+                        <a href="#review-section">Reviews</a>
+                    </div>
+                </div>
+
+                <div class="auth-box">
+                    <a href="/signup" class="btn-auth">
+                        <span class="btn-text">Get Started - Its Free!</span>
+                    </a>
+
+                    <a href="/login" class="btn-log">
+                        <span class="btn-text">Login</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+    </header>
+    <section class="home" id="home">
+
+        <div class="content">
+            <h3>Membuat Reminder</h3>
+            <p>Anda dapat menyimpan pengingat menggunakan formulir yang telah disediakan. Anda 
+                juga dapat mengingatkan team Anda atau customer Anda, atau siapapun. Selain itu, 
+                dengan memanfaatkan fitur manajemen kolom khusus, Anda dapat dengan bebas membuat 
+                template  form reminder sendiri. Anda juga dapat membuat lebih dari satu template 
+                form reminder </p>
+            <a href="#changepreventer" class="btn" class="btn">Let's Get Started</a>
+            <a href="#dispensable" class="btn" class="btn">More Info</a>
+        </div>
+
+        <div class="image">
+            <img src="img/notif.png" alt="">
+        </div>
+    </section>
+
+    <section class="changepreventer" id="changepreventer">
+        <div class="image">
+            <img src="img/access.png" alt="">
+        </div>
+        
+        <div class="content">
+            <h3>Manajemen Pengguna & Akses</h3>
+            <p>Anda dapat mendaftarkan email lain kedalam akun Anda dan menentukan peranannya 
+                sebagai team, customer, atau peran lainnya. Anda dapat membuat dan mengatur 
+                peranan sesuai kebutuhan dengan memberikan akses menu ataupun data </p>
+        </div>
+    </section>    
+
+    <section class="dispensable" id="dispensable">
+        <div class="content">
+            <h3>Kalender Publik</h3>
+            <p>Anda dapat menampilkan event-event Anda ke publik. Sehingga siapapun dapat 
+                melihat event tanpa perlu login. Anda dapat memilih hanya event tertentu 
+                yang akan ditampilkan untuk publik. Fitur ini sangat cocok untuk Anda yang 
+                menginginkan siapapun mengetahui event-event Anda. Misalnya jadwal kurikulum 
+                sekolah yang Anda kelola</p>
+        </div>
+
+        <div class="image">
+            <img src="img/calendar.png" alt="">
+        </div>
+    </section>
+
+    <section class="review-section" id="review-section">
+        <div class="image">
+            <img src="img/ikon-feedback.png" alt="">
+        </div>
+        <div class="review-container">
+        <div class="review-content">
+            <h2>Siapa yang menggunakan Memora?</h2>
+            <p>Siapapun dapat menggunakan Memora, apapun kegiatannya. Silahkan daftar gratis di sini. Atau Anda dapat menyampaikan kasus Anda kepada kami melalui formulir di bawah, team support kami akan membantu Anda.</p>
+            <br>       
+            
+            <form action="/submit-review" method="post">
+                <input type="text" id="name" name="name" placeholder="Your Name (required)" required>
+                <input type="email" id="email" name="email" placeholder="Your Email (required)" required>
+                <input type="text" id="subject" name="subject" placeholder="Subject">
+                <textarea id="message" name="message" placeholder="Your Message" rows="4"></textarea>
+                 <button type="submit" >Send</button>
+            </form>
+        </div>
+    </div>
+    </section>
+
+    <section class="references" id="references">
+        <div class="content">
+            <h3>Never Miss a Moment</h3>
+            <p>100000+ ★★★★★ Reviews</p>
+        </div>
+        
+        <div class="image">
+            <img src="/img/references.png" alt="">
+        </div>
+
+        <br>
+
+        <div class="button-container">
+            <button class="get-started-btn">Get Started - It's Free</button>
+        </div>
+
+        <br><br>
+
+        </div>
+    </section>
+
+    <section class="footer">
+        <div class="footer_contact">
+            <h4>
+                Contact Me
+            </h4>
+            <br>
+            <div class="contact_link_box">
+                <a href="https://untar.ac.id" target="_blank">
+                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                    <span>
+                        Universitas Tarumanagara
+                    </span>
+                </a>
+                <br><br>
+                <a href="http://wa.me/085819600948" target="_blank">
+                    <i class="fa fa-phone" aria-hidden="true"></i>
+                    <span>
+                        Call +62 85819600948
+                    </span>
+                </a>
+                <br><br>
+                <a href="https://mail.google.com/mail/u/0/?view=cm&tf=1&fs=1&to=memora.remind@gmail.com" target="_blank">
+                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                    <span>
+                        memora.remind@gmail.com
+                    </span>
+                </a>
+            </div>
+            <h1 class="credit"> &copy <span> MEMORA </span> | All rights reserved. </h1>
+    </section>
+
+
+    <a href="#home" class="fas fa-angle-up" id="scroll-top"></a>
+    <script src="/js/landingFunction.js"></script>
+</body>
+
+</html>
