@@ -49,12 +49,12 @@
                         <td><%= user.email %></td>
                         <td><%= user.securityAnswer %></td>
                         <td style="text-align: center;">
-                            <form action="/admin/edit/<%= user._id %>" method="get" style="display: inline;">
+                            <form action="/admin/edit/user/<%= user._id %>" method="get" style="display: inline;">
                                 <button type="submit">Edit</button>
                             </form>
-                            <form action="/admin/delete/<%= user._id %>" method="post" onsubmit="return confirm('Are you sure?');" style="display: inline;">
+                            <form action="/admin/delete/user/<%= user._id %>" method="post" onsubmit="return confirm('Are you sure?');" style="display: inline;">
                                 <button class="delete" type="submit">Delete</button>
-                            </form>
+                            </form>                            
                         </td>
                     </tr>
                 <% }); %>
@@ -81,12 +81,12 @@
                             <td><%= review.subject %></td>
                             <td><%= review.message %></td>
                             <td style="text-align: center;">
-                                <form action="/admin/edit/<%= review._id%>" method="get" style="display: inline;">
+                                <form action="/admin/edit/review/<%= review._id %>" method="get" style="display: inline;">
                                     <button type="submit">Edit</button>
                                 </form>
-                                <form action="/admin/delete/<%= review._id %>" method="post" onsubmit="return confirm('Are you sure?');" style="display: inline;">
+                                <form action="/admin/delete/review/<%= review._id %>" method="post" onsubmit="return confirm('Are you sure?');" style="display: inline;">
                                     <button class="delete" type="submit">Delete</button>
-                                </form>
+                                </form>                                
                             </td>
                         </tr>
                     <% }); %>

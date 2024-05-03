@@ -21,8 +21,8 @@ router.get('/', isAdmin, adminController.getAdminDashboard);
 router.post('/add/:type', adminController.addData);
 router.post('/edit/:type/:id', adminController.editData);
 router.post('/delete/:type/:id', adminController.deleteData);
-router.get('/edit/:id/:type', adminController.getEditPage);
-router.get('/add', adminController.getAddPage);
+router.get('/edit/:type/:id', adminController.getEditPage);
+router.get('/add/:type', adminController.getAddPage);
 router.get('/search', adminController.searchUsers);
 
 

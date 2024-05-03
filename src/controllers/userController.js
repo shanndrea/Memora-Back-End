@@ -2,6 +2,8 @@
     const passport = require('passport');
     const User = require("../models/account");
     const Review = require('../models/review');
+    const Notebook = require('../models/notebook');
+    const Note = require('../models/note');
 
 
     // Google authentication middleware
@@ -216,4 +218,50 @@
 
     exports.getToDoListPage = (req, res) => {
         res.render("toDoList"); 
+    };
+
+    // Fungsi CRUD untuk Notebook
+    exports.createNotebook = async (name, userId) => {
+        const newNotebook = new Notebook({
+            name,
+            user: userId
+        });
+        return await newNotebook.save();
+    };
+
+    exports.getAllNotebooksByUserId = async (userId) => {
+        return await Notebook.find({ user: userId }).populate('notes');
+    };
+
+    exports.updateNotebook = async (notebookId, newName) => {
+        return await Notebook.findByIdAndUpdate(notebookId, { name: newName }, { new: true });
+    };
+
+    exports.deleteNotebook = async (notebookId) => {
+        return await Notebook.findByIdAndRemove(notebookId);
+    };
+
+    // Fungsi CRUD untuk Note
+    exports.createNote = async (notebookId, title, text) => {
+        const newNote = new Note({
+            notebook: notebookId,
+            title,
+            text
+        });
+        await newNote.save();
+        return await Notebook.findByIdAndUpdate(notebookId, { $push: { notes: newNote._id } }, { new: true });
+    };
+
+    exports.getNotesByNotebookId = async (notebookId) => {
+        return await Note.find({ notebook: notebookId });
+    };
+
+    exports.updateNote = async (noteId, title, text) => {
+        return await Note.findByIdAndUpdate(noteId, { title, text }, { new: true });
+    };
+
+    exports.deleteNote = async (noteId) => {
+        const note = await Note.findById(noteId);
+        await Notebook.findByIdAndUpdate(note.notebook, { $pull: { notes: noteId } });
+        return await Note.findByIdAndRemove(noteId);
     };

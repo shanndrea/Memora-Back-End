@@ -31,13 +31,31 @@ exports.getAdminDashboard = async (req, res) => {
     }
 };
 
-
-
-
 exports.getEditPage = async (req, res) => {
-    const user = await User.findById(req.params.id);
-    res.render('adminEdit', { user });  // Pastikan Anda memiliki view ini
+    const type = req.params.type || 'users';
+    try {
+        let data;
+        let page; 
+        if (type === 'users') {
+            data = await User.findById(req.params.id);
+            page = 'user';
+        } else if (type === 'review') {
+            data = await Review.findById(req.params.id);
+            page = 'review';
+        } else {
+            return res.status(400).send("Invalid type");
+        }
+        if (!data) {
+            return res.status(404).send("Data not found");
+        }
+        res.render('adminEdit', { data: data, page: page }); // Ensure page is defined or use pageQueryParam
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Failed to fetch data.');
+    }
 };
+
+
 
 exports.getAddPage = async (req, res) => {
     const user = await User.findById(req.params.id);
@@ -55,17 +73,52 @@ const getModel = (type) => {
     }
 };
 
-exports.addData = async (req, res) => {
-    const { type, username, email, password, securityAnswer } = req.body;
+exports.getEditPage = async (req, res) => {
     try {
-        const Model = getModel(type); // Dapatkan model yang sesuai
+        let data;
+        if (req.params.type === 'user') {
+            data = await User.findById(req.params.id);
+        } else if (req.params.type === 'review') {
+            data = await Review.findById(req.params.id);
+        } else {
+            return res.status(400).send("Invalid type");
+        }
+        if (!data) {
+            return res.status(404).send("Data not found");
+        }
+        res.render('adminEdit', { data });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Failed to fetch data.');
+    }
+};
+
+exports.addData = async (req, res) => {
+    const { type, username, email, password, securityAnswer, name, subject, message } = req.body;
+    try {
+        let Model;
+        let newData;
+        if (type === 'user') {
+            Model = User;
+            newData = new Model({
+                username,
+                email,
+                password,
+                securityAnswer
+            });
+        } else if (type === 'review') {
+            Model = Review;
+            newData = new Model({
+                name,
+                email,
+                subject,
+                message
+            });
+        } else {
+            return res.status(400).send("Invalid type");
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newData = new Model({
-            username,
-            email,
-            password: hashedPassword,
-            securityAnswer
-        });
+        newData.password = hashedPassword;
         await newData.save();
         res.redirect('/admin');
     } catch (error) {
@@ -75,15 +128,25 @@ exports.addData = async (req, res) => {
 };
 
 exports.editData = async (req, res) => {
-    const { type, id, username, email, password, securityAnswer } = req.body;
+    const { type, id, username, email, password, securityAnswer, name, subject, message } = req.body;
     try {
-        const Model = getModel(type);
-        const updatedData = {};
-        if (username) updatedData.username = username;
-        if (email) updatedData.email = email;
-        if (password) updatedData.password = await bcrypt.hash(password, 10);
-        if (securityAnswer) updatedData.securityAnswer = securityAnswer;
-
+        let Model;
+        let updatedData = {};
+        if (type === 'user') {
+            Model = User;
+            if (username) updatedData.username = username;
+            if (email) updatedData.email = email;
+            if (password) updatedData.password = await bcrypt.hash(password, 10);
+            if (securityAnswer) updatedData.securityAnswer = securityAnswer;
+        } else if (type === 'review') {
+            Model = Review;
+            if (name) updatedData.name = name;
+            if (email) updatedData.email = email;
+            if (subject) updatedData.subject = subject;
+            if (message) updatedData.message = message;
+        } else {
+            return res.status(400).send("Invalid type");
+        }
         await Model.findByIdAndUpdate(id, updatedData, { new: true });
         res.redirect('/admin');
     } catch (error) {
@@ -95,7 +158,14 @@ exports.editData = async (req, res) => {
 exports.deleteData = async (req, res) => {
     const { type, id } = req.body;
     try {
-        const Model = getModel(type);
+        let Model;
+        if (type === 'user') {
+            Model = User;
+        } else if (type === 'review') {
+            Model = Review;
+        } else {
+            return res.status(400).send("Invalid type");
+        }
         await Model.findByIdAndDelete(id);
         res.redirect('/admin');
     } catch (error) {
@@ -116,6 +186,7 @@ exports.searchUsers = async (req, res) => {
         res.status(500).json({ message: "Search failed due to server error" });
     }
 };
+
 
 
 

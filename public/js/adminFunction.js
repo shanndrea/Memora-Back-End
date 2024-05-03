@@ -19,7 +19,7 @@ function searchUsers() {
         .then(data => {
             updateTable(data);
         })
-        .catch(error => {
+        .catch(error =>  {
             console.error('Error loading the users:', error);
         });
 }

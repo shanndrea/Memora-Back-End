@@ -1,148 +1,113 @@
 'use strict';
 
-/**
-    *Module import
-*/
-import {
-    addEventOnElements, 
-    getGreetingMsg, 
-    activeNotebook, 
-    makeElemEditable
-} from "./utils.js";
+// Import modules
+import { addEventOnElements, getGreetingMsg, activeNotebook, makeElemEditable } from "./utils.js";
 import { Tooltip } from "./Tooltip.js";
-import { db } from "./db.js";
+import { db } from "./db.js"; // Pastikan db.js sudah diubah untuk menggunakan MongoDB
 import { client } from "./client.js";
 import { NoteModal } from "./Modal.js";
 
-/**
-    *MToggle sidebar in small screen
-*/
+// Toggle sidebar visibility on small screens
+const $sidebar = document.querySelector('[data-sidebar]');
+const $sidebarTogglers = document.querySelectorAll('[data-sidebar-toggler]');
+const $overlay = document.querySelector('[data-sidebar-overlay]');
 
-const /**{HTMLElement} */ $sidebar=document.querySelector('[data-sidebar]');
-const /**{Array<HTMLElement>} */ $sidebarTogglers = document.querySelectorAll('[data-sidebar-toggler]');
-const /**{HTMLElement} */ $overlay = document.querySelector('[data-sidebar-overlay]');
-
-addEventOnElements($sidebarTogglers, 'click', function (){
+addEventOnElements($sidebarTogglers, 'click', function () {
     $sidebar.classList.toggle('active');
     $overlay.classList.toggle('active');
 });
 
-/**
- * Initialize tooltip behavior for all DOM elements with 'data-tooltip' attribute.
- */
-const /** */ $tooltipElems = document.querySelectorAll('[data-tooltip]');
+// Initialize tooltips
+const $tooltipElems = document.querySelectorAll('[data-tooltip]');
 $tooltipElems.forEach($elem => Tooltip($elem));
 
-
-
-/*
-* show greeting message on homepage
- */
-
-const /** {HTMLElement} */ $greetElem = document.querySelector('[data-greeting]')
-const /** {number} */ currentHour = new Date().getHours();
+// Display greeting message based on time of day
+const $greetElem = document.querySelector('[data-greeting]');
+const currentHour = new Date().getHours();
 $greetElem.textContent = getGreetingMsg(currentHour);
 
-
-/*
-* show current date on homepage
-*/
-
-const /** {HTMLElement} */ $currentDataElem = document.querySelector('[data-current-date]');
+// Display the current date
+const $currentDateElem = document.querySelector('[data-current-date]');
 const currentDate = new Date().toDateString();
-const modifiedDate = currentDate.slice(0, 3) + ',' + currentDate.slice(3); // Menambahkan koma setelah tanggal
+const modifiedDate = currentDate.slice(0, 3) + ',' + currentDate.slice(3);
+$currentDateElem.textContent = modifiedDate;
 
-$currentDataElem.textContent = modifiedDate;
+// Notebook creation logic
+const $sidebarList = document.querySelector('[data-sidebar-list]');
+const $addNotebookBtn = document.querySelector('[data-add-notebook]');
 
-
-
-
-/**
- *  Notebook create field
- */
-
-const /**{HTMLElement} */ $sidebarList = document.querySelector('[data-sidebar-list]');
-const /**{HTMLElement} */ $addNotebookBtn = document.querySelector('[data-add-notebook]');
-
-const showNotebookField = function () {
-    const /**{HTMLElement}  */ $navItem = document.createElement('div');
-    $navItem.classList.add('nav-item');
-
-    $navItem.innerHTML = `
-        <span class="text text-label-large" data-notebook-field ></span>
-
-        <div class="state-layer"></div>
-    `;
-
-
-    $sidebarList.appendChild($navItem);
-
-    const /**{HTMLElement}  */ $navItemField = $navItem.querySelector('[data-notebook-field]');
-
-    //Active new cated notebook and deactive the last one.
-    activeNotebook.call($navItem);
-
-    //Make notebook field content editable and focus
-    makeElemEditable($navItemField);
-
-    // When user press 'Enter' then create motebook
-    $navItemField.addEventListener('keydown', createNotebook);
-}
-
-$addNotebookBtn.addEventListener('click', showNotebookField);
-
-const createNotebook = function (event) {
-    if (event.key == 'Enter' ){
-        // store new created notebook in database
-       const /**Object */ notebookData = db.post.notebook(this.textContent || 'Untitled');
-       this.parentElement.remove();
-
-       // Render navItem
-        client.notebook.create(notebookData);
+$addNotebookBtn.addEventListener('click', async function () {
+    const notebookName = prompt("Enter the name of the new notebook:");
+    if (notebookName) {
+        try {
+            const notebookData = await db.post.notebook(notebookName);
+            client.notebook.create(notebookData);
+        } catch (error) {
+            console.error('Error creating notebook:', error);
+        }
     }
-}
+});
 
-
-/**
- * Renders the existing notebook list by retrieving data from the database
- * and passingit to the client.
- */
-const renderExistedNotebook = function () {
-    const /** {Array} */ notebookList = db.get.notebook();
-    client.notebook.read(notebookList);
+// Render existing notebooks
+async function renderExistedNotebook() {
+    try {
+        const notebookList = await db.get.notebooks();
+        client.notebook.read(notebookList);
+    } catch (error) {
+        console.error('Error fetching notebooks:', error);
+    }
 }
 
 renderExistedNotebook();
 
-const/**{Array<HTMLElement}*/ $noteCreateBtns = document.querySelectorAll('[data-note-create-btn]');
+// Note creation logic
+const $noteCreateBtns = document.querySelectorAll('[data-note-create-btn]');
 
-addEventOnElements($noteCreateBtns, 'click', function (){
-    //Create and open a new modal
-    const /**{Object}*/ modal = NoteModal();
+addEventOnElements($noteCreateBtns, 'click', async function () {
+    const modal = NoteModal();
     modal.open();
 
-    //handle the submission of the new note to the database and client
-    modal.onSubmit(noteObj => {
-        const /**{string} */ activeNotebookId = document.querySelector('[data-notebook].active').dataset.notebook;
-
-        const /**{Object} */ noteData = db.post.note(activeNotebookId, noteObj);
-        client.note.create(noteData);
-        modal.close();
-    })
+    modal.onSubmit(async (noteObj) => {
+        const activeNotebookId = document.querySelector('[data-notebook].active').dataset.notebook;
+        try {
+            const noteData = await db.post.note(activeNotebookId, noteObj.title, noteObj.text);
+            client.note.create(noteData);
+            modal.close();
+        } catch (error) {
+            console.error('Error creating note:', error);
+        }
+    });
 });
 
-
-const renderExistedNote = function () {
-    const /**{string | undefined} */ activeNotebookId = document.
-    querySelector('[data-notebook].active')?.dataset.notebook;
-
-    if(activeNotebookId) {
-        const /**{array<object>} */ noteList = db.get.note(activeNotebookId);
-        
-        //Display existing note
-        client.note.read(noteList);
+// Display notes for the selected notebook
+async function renderExistedNote() {
+    const activeNotebookId = document.querySelector('[data-notebook].active')?.dataset.notebook;
+    if (activeNotebookId) {
+        try {
+            const noteList = await db.get.notes(activeNotebookId);
+            client.note.read(noteList);
+        } catch (error) {
+            console.error('Error fetching notes:', error);
+        }
     }
 }
 
 renderExistedNote();
 
+// app.js
+
+// Fetch daftar notebook dari backend
+fetch('/notebooks')
+    .then(response => response.json())
+    .then(notebooks => {
+        // Proses daftar notebook dan tampilkan di frontend
+        const notebookList = document.getElementById('notebook-list');
+        notebooks.forEach(notebook => {
+            const listItem = document.createElement('li');
+            listItem.textContent = notebook.name;
+            notebookList.appendChild(listItem);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching notebook list:', error);
+    });
