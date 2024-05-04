@@ -4,6 +4,7 @@
     const Review = require('../models/review');
     const Notebook = require('../models/notebook');
     const Note = require('../models/note');
+    const Event = require('../models/event');
 
 
     // Google authentication middleware
@@ -265,3 +266,56 @@
         await Notebook.findByIdAndUpdate(note.notebook, { $pull: { notes: noteId } });
         return await Note.findByIdAndRemove(noteId);
     };
+
+
+    exports.getCalendarPage = (req, res) => {
+        res.render("calendar"); 
+    };
+
+    exports.addEvent = async (req, res) => {
+        try {
+          const { title, startTime, endTime, eventDate } = req.body;
+          const newEvent = new Event({
+            title,
+            startTime,
+            endTime,
+            eventDate,
+            user: req.user._id  // Pastikan autentikasi pengguna terjaga
+          });
+          await newEvent.save();
+          res.json({ success: true, message: 'Event added successfully', event: newEvent });
+        } catch (error) {
+          res.status(500).json({ success: false, message: error.message });
+        }
+      };
+      
+      // Mengambil semua event milik user
+      exports.getEvents = async (req, res) => {
+        try {
+          const events = await Event.find({ user: req.user._id });
+          res.json({ success: true, events });
+        } catch (error) {
+          res.status(500).json({ success: false, message: error.message });
+        }
+      };
+      
+      // Menghapus event
+      exports.deleteEvent = async (req, res) => {
+        try {
+          await Event.findByIdAndDelete(req.params.id);
+          res.json({ success: true, message: 'Event deleted successfully' });
+        } catch (error) {
+          res.status(500).json({ success: false, message: error.message });
+        }
+      };
+      
+      // Memperbarui event
+      exports.updateEvent = async (req, res) => {
+        try {
+          const { title, startTime, endTime, eventDate } = req.body;
+          const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { title, startTime, endTime, eventDate }, { new: true });
+          res.json({ success: true, message: 'Event updated successfully', event: updatedEvent });
+        } catch (error) {
+          res.status(500).json({ success: false, message: error.message });
+        }
+      };

@@ -13,6 +13,7 @@ router.get("/policy", userController.getPolicyPage);
 router.get("/login", userController.getLoginPage);
 router.post("/login", userController.loginUser);
 router.get("/toDoList", userController.getToDoListPage);
+router.get("/calendar", userController.getCalendarPage);
 router.post("/logout", userController.logoutUser);
 router.get("/forgot", userController.getForgotPasswordPage);
 router.post("/forgot", userController.forgotPassword);

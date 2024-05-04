@@ -117,6 +117,8 @@ button.add:hover, button.add-user:hover, button.update:hover{
 
 button.delete {
     background-color: #f44336de; /* Red */
+    display: inline-block;
+    width: auto;
 }
 
 button.delete:hover {
@@ -174,9 +176,20 @@ button.logout:hover {
     font-size: large;
 }
 
-h1 {
+.welcome{
+    margin-top: -60px;
+}
+
+h1{
     text-align: center;
     color: #333;
+    margin-bottom: 0.3em;
+}
+
+h2{
+    text-align: center;
+    color: #333;
+    margin-bottom: -20px;
 }
 
 .form-group {

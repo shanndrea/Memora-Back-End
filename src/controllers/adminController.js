@@ -9,183 +9,164 @@ exports.adminLogin = async (req, res) => {
     if (result.success) {
         // Mengatur sesi admin atau token jika diperlukan
         req.session.isAdmin = true; // Contoh set session
-        res.redirect('/admin');
+        res.redirect('/users');
     } else {
         res.render('adminLogin', { errorMessage: result.error });
     }
 };
 
-exports.getAdminDashboard = async (req, res) => {
-    const page = req.query.page || 'users';
+// Mengambil semua pengguna
+exports.getUsersDashboard = async (req, res) => {
     try {
-        if (page === 'users') {
-            const users = await User.find().exec();
-            res.render('admin', { page: 'users', users: users });
-        } else if (page === 'review') {
-            const reviews = await Review.find().exec(); // Tidak perlu populate karena tidak menggunakan user_id
-            res.render('admin', { page: 'review', reviews: reviews });
-        }
+        const users = await User.find();
+        res.render('adminUsers', { users });
     } catch (error) {
-        console.error("Error retrieving data:", error);
-        res.status(500).send("Failed to retrieve data.");
+        console.error("Error retrieving users:", error);
+        res.status(500).send("Failed to retrieve users.");
     }
 };
 
-exports.getEditPage = async (req, res) => {
-    const type = req.params.type || 'users';
+// Menambahkan pengguna baru
+exports.getAddUserPage = (req, res) => {
+    res.render('adminAddUser');
+};
+
+exports.addUser = async (req, res) => {
+    const { username, email, password, securityAnswer } = req.body;
     try {
-        let data;
-        let page; 
-        if (type === 'users') {
-            data = await User.findById(req.params.id);
-            page = 'user';
-        } else if (type === 'review') {
-            data = await Review.findById(req.params.id);
-            page = 'review';
-        } else {
-            return res.status(400).send("Invalid type");
-        }
-        if (!data) {
-            return res.status(404).send("Data not found");
-        }
-        res.render('adminEdit', { data: data, page: page }); // Ensure page is defined or use pageQueryParam
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).send('Failed to fetch data.');
-    }
-};
-
-
-
-exports.getAddPage = async (req, res) => {
-    const user = await User.findById(req.params.id);
-    res.render('adminAdd', { user });  // Pastikan Anda memiliki view ini
-};
-
-const getModel = (type) => {
-    switch(type) {
-        case 'user':
-            return User;
-        case 'review':
-            return Review;
-        default:
-            throw new Error("Invalid type provided");
-    }
-};
-
-exports.getEditPage = async (req, res) => {
-    try {
-        let data;
-        if (req.params.type === 'user') {
-            data = await User.findById(req.params.id);
-        } else if (req.params.type === 'review') {
-            data = await Review.findById(req.params.id);
-        } else {
-            return res.status(400).send("Invalid type");
-        }
-        if (!data) {
-            return res.status(404).send("Data not found");
-        }
-        res.render('adminEdit', { data });
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).send('Failed to fetch data.');
-    }
-};
-
-exports.addData = async (req, res) => {
-    const { type, username, email, password, securityAnswer, name, subject, message } = req.body;
-    try {
-        let Model;
-        let newData;
-        if (type === 'user') {
-            Model = User;
-            newData = new Model({
-                username,
-                email,
-                password,
-                securityAnswer
-            });
-        } else if (type === 'review') {
-            Model = Review;
-            newData = new Model({
-                name,
-                email,
-                subject,
-                message
-            });
-        } else {
-            return res.status(400).send("Invalid type");
-        }
         const hashedPassword = await bcrypt.hash(password, 10);
-        newData.password = hashedPassword;
-        await newData.save();
+        const newUser = new User({ username, email, password: hashedPassword, securityAnswer });
+        await newUser.save();
         res.redirect('/admin');
     } catch (error) {
-        console.error(`Failed to add new ${type}:`, error);
-        res.status(500).send(`Failed to add new ${type}.`);
+        console.error("Failed to add user:", error);
+        res.status(500).send("Failed to add user.");
     }
 };
 
-exports.editData = async (req, res) => {
-    const { type, id, username, email, password, securityAnswer, name, subject, message } = req.body;
+// Mengedit pengguna
+exports.getEditUserPage = async (req, res) => {
     try {
-        let Model;
-        let updatedData = {};
-        if (type === 'user') {
-            Model = User;
-            if (username) updatedData.username = username;
-            if (email) updatedData.email = email;
-            if (password) updatedData.password = await bcrypt.hash(password, 10);
-            if (securityAnswer) updatedData.securityAnswer = securityAnswer;
-        } else if (type === 'review') {
-            Model = Review;
-            if (name) updatedData.name = name;
-            if (email) updatedData.email = email;
-            if (subject) updatedData.subject = subject;
-            if (message) updatedData.message = message;
-        } else {
-            return res.status(400).send("Invalid type");
-        }
-        await Model.findByIdAndUpdate(id, updatedData, { new: true });
-        res.redirect('/admin');
+        console.log("Editing user with ID:", req.params.id);
+        console.log("Data received:", req.body); // Tambahkan ini untuk mencetak nilai req.params.id
+        const user = await User.findById(req.params.id);
+        console.log("User Found:", user); // Tambahkan ini untuk mencetak hasil pencarian user
+        if (!user) return res.status(404).send("User not found");
+        res.render('adminEditUser', { user });
     } catch (error) {
-        console.error(`Error updating ${type}:`, error);
-        res.status(500).send(`Failed to update ${type}.`);
+        console.error("Error fetching user:", error);
+        res.status(500).send('Failed to fetch user.');
     }
 };
 
-exports.deleteData = async (req, res) => {
-    const { type, id } = req.body;
+
+exports.editUser = async (req, res) => {
+    const { id } = req.params;
+    const { username, email, password, securityAnswer } = req.body;
     try {
-        let Model;
-        if (type === 'user') {
-            Model = User;
-        } else if (type === 'review') {
-            Model = Review;
-        } else {
-            return res.status(400).send("Invalid type");
-        }
-        await Model.findByIdAndDelete(id);
-        res.redirect('/admin');
+        const updatedData = {};
+        if (username) updatedData.username = username;
+        if (email) updatedData.email = email;
+        if (password) updatedData.password = await bcrypt.hash(password, 10);
+        if (securityAnswer) updatedData.securityAnswer = securityAnswer;
+
+        await User.findByIdAndUpdate(id, updatedData, { new: true }); // Memperbarui pengguna
+        res.redirect('/admin'); // Mengalihkan kembali ke dashboard admin setelah pembaruan
     } catch (error) {
-        console.error(`Error deleting ${type}:`, error);
-        res.status(500).send(`Failed to delete ${type}.`);
+        console.error("Error updating user:", error);
+        res.status(500).send("Failed to update user.");
     }
 };
 
+
+// Menghapus pengguna
+exports.deleteUser = async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.redirect('/admin');
+    } catch (error) {
+        console.error("Failed to delete user:", error);
+        res.status(500).send("Failed to delete user.");
+    }
+};
+
+// review
+exports.getReviewDashboard = async (req, res) => {
+    try {
+        const review = await Review.find();
+        res.render('adminReview', { review });
+    } catch (error) {
+        console.error("Error retrieving Review:", error);
+        res.status(500).send("Failed to retrieve Review.");
+    }
+};
+
+// Menambahkan pengguna baru
+exports.getAddReviewPage = (req, res) => {
+    res.render('adminAddReview');
+};
+
+exports.addReview = async (req, res) => {
+    const { name, email, subject, message } = req.body;
+    try {
+        const newReview = new Review({ name, email, subject, message });
+        await newReview.save();
+        res.redirect('/admin/review');
+    } catch (error) {
+        console.error("Failed to add review:", error);
+        res.status(500).send("Failed to add review.");
+    }
+};
+
+// Mengedit review
+exports.getEditReviewPage = async (req, res) => {
+    try {
+        const review = await Review.findById(req.params.id);
+        if (!review) return res.status(404).send("Review not found");
+        res.render('adminEditReview', { review });
+    } catch (error) {
+        console.error("Error fetching Review:", error);
+        res.status(500).send('Failed to fetch Review.');
+    }
+};
+
+exports.editReview = async (req, res) => {
+    const { name, email, subject, message } = req.body;
+    try {
+        const updatedData = { name, email, subject, message }; // Menyesuaikan dengan fields yang diupdate
+        await Review.findByIdAndUpdate(req.params.id, updatedData);
+        res.redirect('/admin/review');
+    } catch (error) {
+        console.error("Failed to update review:", error);
+        res.status(500).send("Failed to update review.");
+    }
+};
+
+// Menghapus pengguna
+exports.deleteReview = async (req, res) => {
+    try {
+        await Review.findByIdAndDelete(req.params.id);
+        res.redirect('/admin/review');
+    } catch (error) {
+        console.error("Failed to delete Review:", error);
+        res.status(500).send("Failed to delete review.");
+    }
+};
 
 exports.searchUsers = async (req, res) => {
     const searchQuery = req.query.term || '';
+    console.log("Search term received:", searchQuery); // Log untuk melihat term yang diterima
     const regex = new RegExp(searchQuery, 'i');
     try {
         const users = await User.find({ username: { $regex: regex } });
-        res.json(users); // Mengirim balik data sebagai JSON
+        console.log("Users found:", users); // Log untuk melihat user yang ditemukan
+        res.json(users);
     } catch (error) {
         console.error("Search failed:", error);
         res.status(500).json({ message: "Search failed due to server error" });
     }
 };
+
 
 
 

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const passport = require('passport');
 require('./src/config/passport-setup');
+const bodyParser = require('body-parser');
 const { connectDB } = require('./src/config/database');
 const userRoutes = require('./src/routes/userRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
@@ -27,8 +28,10 @@ app.use(session({
     saveUninitialized: false,
 }));
     
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// untuk mengurai application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
 

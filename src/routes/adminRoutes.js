@@ -16,14 +16,22 @@ async function isAdmin(req, res, next) {
     }
 }
 
-// Route to render the admin dashboard
-router.get('/', isAdmin, adminController.getAdminDashboard); 
-router.post('/add/:type', adminController.addData);
-router.post('/edit/:type/:id', adminController.editData);
-router.post('/delete/:type/:id', adminController.deleteData);
-router.get('/edit/:type/:id', adminController.getEditPage);
-router.get('/add/:type', adminController.getAddPage);
+// Routes for Users
+router.get('/', isAdmin, adminController.getUsersDashboard);
+router.get('/edit/:id', adminController.getEditUserPage);
+router.post('/edit/:id', adminController.editUser);
+router.get('/add', adminController.getAddUserPage);
+router.post('/add', adminController.addUser);
+router.post('/delete/:id', adminController.deleteUser);
 router.get('/search', adminController.searchUsers);
+
+// Routes for Reviews
+router.get('/review', adminController.getReviewDashboard);
+router.get('/review/edit/:id', adminController.getEditReviewPage);
+router.post('/review/edit/:id', adminController.editReview);
+router.get('/review/add', adminController.getAddReviewPage);
+router.post('/review/add', adminController.addReview);
+router.post('/review/delete/:id', adminController.deleteReview);
 
 
 module.exports = router;
