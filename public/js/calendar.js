@@ -56,7 +56,7 @@ const months = [
 //   },
 // ];
 
-const eventsArr = [];
+let eventsArr = [];
 getEvents();
 console.log(eventsArr);
 
@@ -322,91 +322,50 @@ addEventTo.addEventListener("input", (e) => {
 
 //function to add event to eventsArr
 addEventSubmit.addEventListener("click", () => {
-  const eventTitle = addEventTitle.value;
-  const eventTimeFrom = addEventFrom.value;
-  const eventTimeTo = addEventTo.value;
+  const eventTitle = addEventTitle.value.trim();
+  const eventTimeFrom = addEventFrom.value.trim();
+  const eventTimeTo = addEventTo.value.trim();
+
   if (eventTitle === "" || eventTimeFrom === "" || eventTimeTo === "") {
     alert("Please fill all the fields");
     return;
   }
 
-  //check correct time format 24 hour
-  const timeFromArr = eventTimeFrom.split(":");
-  const timeToArr = eventTimeTo.split(":");
-  if (
-    timeFromArr.length !== 2 ||
-    timeToArr.length !== 2 ||
-    timeFromArr[0] > 23 ||
-    timeFromArr[1] > 59 ||
-    timeToArr[0] > 23 ||
-    timeToArr[1] > 59
-  ) {
-    alert("Invalid Time Format");
-    return;
-  }
-
-  const timeFrom = convertTime(eventTimeFrom);
-  const timeTo = convertTime(eventTimeTo);
-
-  //check if event is already added
-  let eventExist = false;
-  eventsArr.forEach((event) => {
-    if (
-      event.day === activeDay &&
-      event.month === month + 1 &&
-      event.year === year
-    ) {
-      event.events.forEach((event) => {
-        if (event.title === eventTitle) {
-          eventExist = true;
-        }
-      });
-    }
-  });
-  if (eventExist) {
-    alert("Event already added");
-    return;
-  }
+  // Prepare event data to be sent to the backend
   const newEvent = {
-    title: eventTitle,
-    time: timeFrom + " - " + timeTo,
+    day: activeDay,
+    month: month + 1, // JavaScript months are zero-indexed, hence the +1
+    year: year,
+    events: [{
+      title: eventTitle,
+      time: eventTimeFrom + " - " + eventTimeTo
+    }]
   };
-  console.log(newEvent);
-  console.log(activeDay);
-  let eventAdded = false;
-  if (eventsArr.length > 0) {
-    eventsArr.forEach((item) => {
-      if (
-        item.day === activeDay &&
-        item.month === month + 1 &&
-        item.year === year
-      ) {
-        item.events.push(newEvent);
-        eventAdded = true;
-      }
-    });
-  }
 
-  if (!eventAdded) {
-    eventsArr.push({
-      day: activeDay,
-      month: month + 1,
-      year: year,
-      events: [newEvent],
-    });
-  }
-
-  console.log(eventsArr);
-  addEventWrapper.classList.remove("active");
-  addEventTitle.value = "";
-  addEventFrom.value = "";
-  addEventTo.value = "";
-  updateEvents(activeDay);
-  //select active day and add event class if not added
-  const activeDayEl = document.querySelector(".day.active");
-  if (!activeDayEl.classList.contains("event")) {
-    activeDayEl.classList.add("event");
-  }
+  fetch('/events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newEvent)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to add event');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Event added successfully:', data);
+    eventsArr.push(newEvent);  // Optionally update local state
+    updateEvents(activeDay);
+    updateCalendarUI();
+    addEventWrapper.classList.remove("active");
+  })
+  .catch(error => {
+    console.error('Error adding event:', error);
+    alert('Error adding event');
+  });
 });
 
 //function to delete event when clicked on event
@@ -423,6 +382,21 @@ eventsContainer.addEventListener("click", (e) => {
           event.events.forEach((item, index) => {
             if (item.title === eventTitle) {
               event.events.splice(index, 1);
+              let eventId = event._id;
+              fetch(`/event/delete/${eventId}`, {
+                method: 'DELETE'
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  console.log(data.message);
+                } else {
+                  console.error('Failed to delete the event:', data.message);
+                }
+              })
+              .catch(error => {
+                console.error('Error deleting the event:', error);
+              });
             }
           });
           //if no events left in a day then remove that day from eventsArr
@@ -448,11 +422,33 @@ function saveEvents() {
 
 //function to get events from local storage
 function getEvents() {
-  //check if events are already saved in local storage then return event else nothing
-  if (localStorage.getItem("events") === null) {
-    return;
+  fetch('/events')
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Failed to fetch events');
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (data.success && Array.isArray(data.events)) {
+          eventsArr = data.events; // Assuming eventsArr is already declared and used to render events
+          updateCalendarUI(); // Update your calendar view to reflect the fetched events
+      } else {
+          console.error('No events found or error in response', data);
+      }
+  })
+  .catch(error => {
+      console.error('Error fetching events:', error);
+  });
+}
+
+function updateCalendarUI() {
+  // Refresh the calendar or event display using the updated eventsArr
+  initCalendar();
+  // Optionally, update any specific day's events if your UI requires it
+  if (typeof activeDay === 'number') {
+      updateEvents(activeDay);
   }
-  eventsArr.push(...JSON.parse(localStorage.getItem("events")));
 }
 
 function convertTime(time) {

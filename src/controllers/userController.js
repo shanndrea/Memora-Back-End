@@ -2,7 +2,7 @@
     const passport = require('passport');
     const User = require("../models/account");
     const Review = require('../models/review');
-    const Notebook = require('../models/notebook');
+    // const Notebook = require('../models/notebook');
     const Note = require('../models/note');
     const Event = require('../models/event');
 
@@ -46,10 +46,10 @@
         const { username, email, password, securityAnswer } = req.body;
 
         // Check if user already exists
-        const existingUser = await User.findOne({ username: username });
-        if (existingUser) {
-            return res.render("signup", { errorMessage: "User already exists. Please choose a different username." });
-        }
+        // const existingUser = await User.findOne({ username: username });
+        // if (existingUser) {
+        //     return res.render("signup", { errorMessage: "User already exists. Please choose a different username." });
+        // }
 
         try {
             if (req.user && req.user.googleId) {
@@ -115,13 +115,12 @@
             // compare hash password
             const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
             if (isPasswordMatch) {
+                req.session.user = { id: check._id, username: check.username, isAdmin: check.isAdmin };
                 return res.render("home"); // Ensure use of return here
             } else {
                 return res.render("login", { errorMessage: "Wrong password." });
             }            
-
-            req.session.user = { id: user._id, username: user.username, isAdmin: user.isAdmin };
-            res.redirect(user.isAdmin ? '/admin' : '/home');
+            // res.redirect(user.isAdmin ? '/admin' : '/home');
         } catch {
             return res.render("login", { errorMessage: "Wrong details." });
         }
@@ -217,41 +216,82 @@
         res.render("policy"); 
     };
 
-    exports.getToDoListPage = (req, res) => {
-        res.render("toDoList"); 
+    exports.getToDoListPage = async (req, res) => {
+        const user_id = req.session.user.id;
+        const notes = await Note.find({user_id: user_id}).lean(); 
+        res.render("toDoList", { noteJson: JSON.stringify(notes) }); 
+    };
+
+    exports.addToDoList =async (req, res) => {
+        try {
+            const user_id = req.session.user.id;
+            const { title, text, noteDate, category } = req.body;
+            const newNote = new Note({
+                title,
+                text,
+                noteDate,
+                category,
+                user_id
+            });
+            await newNote.save();
+            return res.status(200).send(newNote);
+        } catch (error) {
+            console.error("Error saving review:", error);
+            return res.redirect("/toDoList");
+        }
+    };
+    
+    exports.deleteToDoList = async (req, res) => {
+        try {
+            await Note.findByIdAndDelete(req.params.id);
+            res.status(200).send({ message: 'Note deleted successfully' });
+        } catch (error) {
+            console.error("Failed to delete note:", error);
+            res.status(500).send("Failed to delete note.");
+        }
+    };
+    
+    exports.updateToDoList = async (req, res) => {
+        try {
+            await Note.findByIdAndUpdate(req.params.id, req.body, { new: true });
+            res.status(200).send({ message: 'Note updated successfully' });
+        } catch (error) {
+            console.error("Failed to update note:", error);
+            res.status(500).send("Failed to update note.");
+        }
     };
 
     // Fungsi CRUD untuk Notebook
-    exports.createNotebook = async (name, userId) => {
-        const newNotebook = new Notebook({
-            name,
-            user: userId
-        });
-        return await newNotebook.save();
-    };
+    // exports.createNotebook = async (name, userId) => {
+    //     const newNotebook = new Notebook({
+    //         name,
+    //         user: userId
+    //     });
+    //     return await newNotebook.save();
+    // };
 
-    exports.getAllNotebooksByUserId = async (userId) => {
-        return await Notebook.find({ user: userId }).populate('notes');
-    };
+    // exports.getAllNotebooksByUserId = async (userId) => {
+    //     return await Notebook.find({ user: userId }).populate('notes');
+    // };
 
-    exports.updateNotebook = async (notebookId, newName) => {
-        return await Notebook.findByIdAndUpdate(notebookId, { name: newName }, { new: true });
-    };
+    // exports.updateNotebook = async (notebookId, newName) => {
+    //     return await Notebook.findByIdAndUpdate(notebookId, { name: newName }, { new: true });
+    // };
 
-    exports.deleteNotebook = async (notebookId) => {
-        return await Notebook.findByIdAndRemove(notebookId);
-    };
+    // exports.deleteNotebook = async (notebookId) => {
+    //     return await Notebook.findByIdAndRemove(notebookId);
+    // };
 
-    // Fungsi CRUD untuk Note
-    exports.createNote = async (notebookId, title, text) => {
-        const newNote = new Note({
-            notebook: notebookId,
-            title,
-            text
-        });
-        await newNote.save();
-        return await Notebook.findByIdAndUpdate(notebookId, { $push: { notes: newNote._id } }, { new: true });
-    };
+    // // Fungsi CRUD untuk Note
+    // exports.createNote = async (notebookId, title, text) => {
+    //     const newNote = new Note({
+    //         notebook: notebookId,
+    //         title,
+    //         text
+    //     });
+    //     await newNote.save();
+    //     return await Notebook.findByIdAndUpdate(notebookId, { $push: { notes: newNote._id } }, { new: true });
+    // };
 
     exports.getNotesByNotebookId = async (notebookId) => {
         return await Note.find({ notebook: notebookId });
@@ -268,32 +308,33 @@
     };
 
 
-    exports.getCalendarPage = (req, res) => {
+    exports.getCalendarPage = async (req, res) => {
         res.render("calendar"); 
     };
 
     exports.addEvent = async (req, res) => {
         try {
-          const { title, startTime, endTime, eventDate } = req.body;
-          const newEvent = new Event({
-            title,
-            startTime,
-            endTime,
-            eventDate,
-            user: req.user._id  // Pastikan autentikasi pengguna terjaga
-          });
-          await newEvent.save();
-          res.json({ success: true, message: 'Event added successfully', event: newEvent });
+            const user_id = req.session.user.id;
+
+            const eventData = {
+                ...req.body,
+                user: user_id 
+              };
+              const event = new Event(eventData);
+              await event.save();
+            res.json({ success: true, message: 'Event added successfully', event: event });
         } catch (error) {
           res.status(500).json({ success: false, message: error.message });
         }
       };
       
       // Mengambil semua event milik user
-      exports.getEvents = async (req, res) => {
+      exports.getEvent = async (req, res) => {
         try {
-          const events = await Event.find({ user: req.user._id });
-          res.json({ success: true, events });
+            const user_id = req.session.user.id;
+
+            const events = await Event.find({ user: user_id });
+            res.json({ success: true, events });
         } catch (error) {
           res.status(500).json({ success: false, message: error.message });
         }

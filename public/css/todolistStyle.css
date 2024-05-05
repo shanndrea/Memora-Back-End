@@ -463,16 +463,70 @@ body {
     visibility: visible;
 }
 
+.modals-overlay,
 .modal-overlay {
-    z-index: 6;
-    visibility: visible;
-    animation: fade-overlay var(--tr-duration-short) var(--tr-easing-linear) forwards;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: none; 
 }
 
-@keyframes fade-overlay{
-    0% {opacity: 0;}
-    100% {opacity: 0.5;}
+.modals{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    z-index: 1000;
+    display: none; 
+    width: 600px;
 }
+.modals-footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+/* Efek hover untuk tombol di footer modal */
+.modals-footer button:hover {
+    background-color: var(--on-primary-dark); /* Ubah warna latar belakang saat tombol dihover */
+    color: #f1f1f1; /* Ubah warna teks saat tombol dihover */
+    transition: background-color 0.3s, color 0.3s; /* Animasi perubahan warna dengan transisi */
+  }
+  
+.btn.text {
+    color: var(--primary);
+    padding-inline: var(--spacing-3);
+}
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1000;
+    display: none; 
+}
+.modals.show-modals,
+.modal.show-modal {
+    display: block;
+}
+
+@keyframes fade-overlay {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 
 /*-----------------------------------*\
   #COMPONENTS
@@ -540,6 +594,7 @@ body {
     cursor: pointer;
     --state-layer-bg: var(--on-surface);
     transition: border-color var(--tr-duration-short) var(--tr-easing-linear);
+
 }
 
 .card:where(:hover, :focus-visible) {border-color: var(--outline);}
@@ -580,6 +635,7 @@ body {
  * Modal
  */
 
+ 
 .modal{
     position: fixed;
     top: 50%;
@@ -772,6 +828,12 @@ body {
     cursor: pointer;
 }
 
+.nav-item:hover {
+    background-color: #4e4d4f;
+    transition: background-color 0.3s;
+    color: white; 
+  }
+
 .nav-item.active {
     background-color: var(--secondary-container);
     color: #ffffff;
@@ -843,7 +905,6 @@ body {
     align-content: flex-start;
     flex-grow: 1;
     align-items: stretch;
-    gap: var(--spacing-2);
 }
 
 .main .fab {
@@ -855,8 +916,8 @@ body {
 
 .empty-notes{
     position: absolute;
-    top: 40%;
-    left: 50%;
+    top: 50%;
+    left: 55%;
     transform: translate(-50%,-50%);
     color: var(--on-surface-variant);
     -webkit-user-select: none;
@@ -949,5 +1010,17 @@ body {
 
 .exit-btn:hover {
     background-color: #d32f2f;
+}
+
+
+#searchBar {
+    width: 40%;
+    padding: 10px;
+    background-color: #cdcdcd5c;
+    border-radius: 50px;
+    position: absolute;
+
+    left: 75%;
+    transform: translate(-50%, -50%); /* Untuk memposisikan elemen ke tengah layar */
 }
 
