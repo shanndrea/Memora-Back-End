@@ -11,7 +11,7 @@
         <div class="logo">
             <img src="/img/logo4.png" alt="logo">
         </div>
-        <button class="logout" onclick="location.href='/logout'" style="float: right;">Logout</button>
+        <button class="logout" onclick="location.href='/'" style="float: right;">Logout</button>
     </header>
 
     <div class="table-container">
@@ -28,9 +28,31 @@
                     </div>
                 </div>
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search users...">
+                <input type="text" id="searchInput" placeholder="Search users..." onkeyup="searchUsers()">
+                <script>
+
+                function searchUsers() {
+                    var input = document.getElementById('searchInput');
+                    var filter = input.value.toLowerCase();
+                    var tableBody = document.getElementById('userTableBody');
+                    var tr = tableBody.getElementsByTagName('tr');
+                
+                    for (var i = 0; i < tr.length; i++) {
+                        var td = tr[i].getElementsByTagName('td')[1]; 
+                        if (td) {
+                            var txtValue = td.textContent || td.innerText;
+                            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }       
+                    }
+                }                    
+                </script>
+
             </div>  
-        </div>    
+        </div>
         <table>
             <thead>
                 <tr>
@@ -72,6 +94,6 @@
         <p>© 2024 MEMORA. All rights reserved.</p>
     </footer>
     
-    <script src="/js/adminFunctions.js"></script>
+    <script src="/public/js/adminFunction.js"></script>
 </body>
 </html>
